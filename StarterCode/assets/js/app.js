@@ -16,7 +16,7 @@ var svgHeight = 500;
 var margin = {
     top: 20,
     bottom: 50,
-    left: 20,
+    left: 60,
     right: 50
 };
 
@@ -35,6 +35,7 @@ var svg = d3.select("#scatter")
 
 // 2b: Insert G
 var chartGroup = svg.append("g")
+    .classed("plot", true)
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
 
@@ -71,19 +72,60 @@ d3.csv("assets/data/data.csv").then(function(data) {
 
     
     // Step 2b: Insert the axes into the SVG
+    
     chartGroup.append("g")
+        .classed("xAxis", true)
         .attr("transform", `translate(0, ${plotHeight})`)
         .call(bottomAxis);
+    
+    chartGroup.append("g")
+        .classed("xLabel", true)
+        .append("text")
+        .attr("transform", `translate(${svgWidth/2},${svgHeight - margin.bottom/2})`)
+        .attr("font-weight", "bold")
+        .text("In Poverty (%)")
+    
+    chartGroup.append("g")
+        .classed("yLabel", true)
+        .append("text")
+        .attr("transform", `rotate(270), translate(${svgHeight/-2},${margin.left/-2})`)
+        .attr("font-weight", "bold")
+        .text("Lacks Healthcare (%)")
+    
+  
+        
 
     chartGroup.append("g")
+        .classed("yAxis", true)
         .call(leftAxis);
+    
+    var datapointsGroup = chartGroup.append("g")
+        .classed("datapoints", true)
 
-    chartGroup.selectAll("circle")
+    datapointsGroup.selectAll("circle")
         .data(data)
         .enter()
         .append("circle")
-        .attr("r", 5)
+        .attr("r", 10)
         .attr("cx", d => xLinearScale(d.poverty))
-        .attr("cy", d => yLinearScale(d.healthcare));
+        .attr("cy", d => yLinearScale(d.healthcare))
+        .attr("fill", "teal")
+        .attr("opacity", ".5");
+
+    var datalabelsGroup = chartGroup.append("g")
+        .classed("datalabels", true)
+    
+    datalabelsGroup.selectAll(null)
+        .data(data)
+        .enter()
+        .append("text")
+        .attr("x", d => xLinearScale(d.poverty))
+        .attr("y", d => yLinearScale(d.healthcare))
+        .attr("transform", "translate(-5.5,4)")
+        .attr("font-size", "9px")
+        .attr("fill", "white")
+        .text(d => d.abbr);
+    
+
 
 })
