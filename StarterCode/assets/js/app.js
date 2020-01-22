@@ -66,5 +66,7 @@ d3.csv("assets/data/data.csv").then(function(data) {
 
     chartGroup.append("g")
         .call(leftAxis);
+    
+    var gerard
 
 })
